@@ -65,7 +65,7 @@
                   data-goleiro="1"
                   data-base-dia="{{ base_dia }}"
                   data-base-acumulado="{{ base_acum }}">
-                <td style="text-align:left;" data-label="Goleiro">
+                <td style="text-align:left;">
                   <span class="badge badge-role me-1">GOL</span>
                   {{ j.nome }}
                 </td>
@@ -171,7 +171,7 @@
                   data-goleiro="0"
                   data-base-dia="{{ base_dia }}"
                   data-base-acumulado="{{ base_acum }}">
-                <td style="text-align:left;" data-label="Jogador">
+                <td style="text-align:left;">
                   {{ j.nome }}
                 </td>
 
@@ -270,7 +270,7 @@
         {% for r in ranking %}
           <tr>
             <td data-label="#"> {{ loop.index }} </td>
-            <td style="text-align:left;" data-label="Jogador">
+            <td style="text-align:left;">
               {% if r.jogador.goleiro %}
                 <span class="badge badge-role me-1">GOL</span>
               {% endif %}
