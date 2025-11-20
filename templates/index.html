@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card card-app mb-4">
+  <div class="card-header card-header-app d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <h1 class="h5 mb-1 text-light">Desempenho da Pelada</h1>
+      <small class="text-secondary">Registre gols, assistências e resultados por dia para montar o ranking automático.</small>
+    </div>
+
+    <form method="get" class="d-flex flex-wrap align-items-end gap-2">
+      <div>
+        <label class="form-label mb-1 small text-secondary">Data da partida</label>
+        <input type="date" name="data"
+               class="form-control form-control-sm bg-dark text-light border-secondary"
+               value="{{ partida.data.isoformat() }}">
+      </div>
+      <button class="btn btn-outline-light btn-sm mt-2">
+        Trocar data
+      </button>
+    </form>
+  </div>
+
+  <div class="card-body">
+
+    <form method="post" class="mb-3">
+
+      <!-- ===================== GOLEIROS ===================== -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="section-title">
+            <span></span>
+            GOLEIROS
+          </div>
+          <div class="pill">
+            <strong>{{ goleiros|length }}</strong> cadastrados
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-sm table-darkish align-middle text-center">
+            <thead>
+            <tr>
+              <th style="min-width: 180px; text-align:left;">Goleiro</th>
+              <th>Gols<br><small>(2 pts)</small></th>
+              <th>Assistências<br><small>(2 pts)</small></th>
+              <th>Vitórias<br><small>(2 pts)</small></th>
+              <th>Sem tomar gol<br><small>(2 pts)</small></th>
+              <th>Total do dia</th>
+              <th>Total acumulado</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for j in goleiros %}
+              {% set e = estat_por_jogador.get(j.id) %}
+              {% set base_dia = e.pontos_dia if e else 0 %}
+              {% set base_acum = 0 %}
+              {% for r in ranking %}
+                {% if r.jogador.id == j.id %}
+                  {% set base_acum = r.pontos %}
+                {% endif %}
+              {% endfor %}
+
+              <tr class="linha-jogador"
+                  data-goleiro="1"
+                  data-base-dia="{{ base_dia }}"
+                  data-base-acumulado="{{ base_acum }}">
+                <td style="text-align:left;">
+                  <span class="badge badge-role me-1">GOL</span>
+                  {{ j.nome }}
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="gols"
+                         name="j{{ j.id }}_gols" min="0"
+                         value="{{ e.gols if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="assistencias"
+                         name="j{{ j.id }}_assistencias" min="0"
+                         value="{{ e.assistencias if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="vitorias"
+                         name="j{{ j.id }}_vitorias" min="0"
+                         value="{{ e.vitorias if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="sem_gol"
+                         name="j{{ j.id }}_sem_gol" min="0"
+                         value="{{ e.sem_gol if e else 0 }}">
+                </td>
+
+                <!-- goleiro não usa empate, mantemos escondido -->
+                <input type="hidden"
+                       class="campo-stat"
+                       data-metrica="empates"
+                       name="j{{ j.id }}_empates"
+                       value="{{ e.empates if e else 0 }}">
+
+                <td class="fw-semibold text-success cel-total-dia">
+                  {{ base_dia }}
+                </td>
+
+                <td class="cel-total-acum">
+                  <span class="fw-semibold">{{ base_acum }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if goleiros|length == 0 %}
+              <tr>
+                <td colspan="7" class="text-secondary small">
+                  Nenhum goleiro cadastrado ainda. Vá na aba <strong>Jogadores</strong> e marque "É goleiro?"
+                  para aparecer aqui.
+                </td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ===================== JOGADORES DE LINHA ===================== -->
+      <div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div class="section-title">
+            <span></span>
+            JOGADORES DE LINHA
+          </div>
+          <div class="pill">
+            <strong>{{ jogadores_linha|length }}</strong> cadastrados
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-sm table-darkish align-middle text-center">
+            <thead>
+            <tr>
+              <th style="min-width: 180px; text-align:left;">Jogador</th>
+              <th>Gols<br><small>(2 pts)</small></th>
+              <th>Assistências<br><small>(2 pts)</small></th>
+              <th>Vitórias<br><small>(2 pts)</small></th>
+              <th>Empates<br><small>(1 pt)</small></th>
+              <th>Total do dia</th>
+              <th>Total acumulado</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for j in jogadores_linha %}
+              {% set e = estat_por_jogador.get(j.id) %}
+              {% set base_dia = e.pontos_dia if e else 0 %}
+              {% set base_acum = 0 %}
+              {% for r in ranking %}
+                {% if r.jogador.id == j.id %}
+                  {% set base_acum = r.pontos %}
+                {% endif %}
+              {% endfor %}
+
+              <tr class="linha-jogador"
+                  data-goleiro="0"
+                  data-base-dia="{{ base_dia }}"
+                  data-base-acumulado="{{ base_acum }}">
+                <td style="text-align:left;">
+                  {{ j.nome }}
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="gols"
+                         name="j{{ j.id }}_gols" min="0"
+                         value="{{ e.gols if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="assistencias"
+                         name="j{{ j.id }}_assistencias" min="0"
+                         value="{{ e.assistencias if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="vitorias"
+                         name="j{{ j.id }}_vitorias" min="0"
+                         value="{{ e.vitorias if e else 0 }}">
+                </td>
+
+                <td>
+                  <input type="number"
+                         class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
+                         data-metrica="empates"
+                         name="j{{ j.id }}_empates" min="0"
+                         value="{{ e.empates if e else 0 }}">
+                </td>
+
+                <!-- linha não usa sem_gol, fica escondido -->
+                <input type="hidden"
+                       class="campo-stat"
+                       data-metrica="sem_gol"
+                       name="j{{ j.id }}_sem_gol"
+                       value="{{ e.sem_gol if e else 0 }}">
+
+                <td class="fw-semibold text-success cel-total-dia">
+                  {{ base_dia }}
+                </td>
+
+                <td class="cel-total-acum">
+                  <span class="fw-semibold">{{ base_acum }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+            {% if jogadores_linha|length == 0 %}
+              <tr>
+                <td colspan="7" class="text-secondary small">
+                  Nenhum jogador de linha cadastrado ainda. Use a aba <strong>Jogadores</strong> para cadastrar.
+                </td>
+              </tr>
+            {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-3">
+        <button class="btn btn-primary">
+          Salvar desempenho do dia
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- ===================== RANKING GERAL ===================== -->
+<div class="card card-app">
+  <div class="card-header card-header-app d-flex justify-content-between align-items-center">
+    <span class="ranking-title">Ranking geral (acumulado)</span>
+    <small class="text-secondary">Soma de todos os jogos registrados</small>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-sm table-darkish align-middle text-center">
+        <thead>
+        <tr>
+          <th>#</th>
+          <th style="text-align:left;">Jogador</th>
+          <th>Gols</th>
+          <th>Assistências</th>
+          <th>Vitórias</th>
+          <th>Empates</th>
+          <th>Sem gol (goleiro)</th>
+          <th>Pontos</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for r in ranking %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td style="text-align:left;">
+              {% if r.jogador.goleiro %}
+                <span class="badge badge-role me-1">GOL</span>
+              {% endif %}
+              {{ r.jogador.nome }}
+            </td>
+            <td>{{ r.gols }}</td>
+            <td>{{ r.assistencias }}</td>
+            <td>{{ r.vitorias }}</td>
+            <td>{{ r.empates }}</td>
+            <td>{{ r.sem_gol }}</td>
+            <td><strong class="text-success">{{ r.pontos }}</strong></td>
+          </tr>
+        {% endfor %}
+        {% if ranking|length == 0 %}
+          <tr>
+            <td colspan="8" class="text-secondary small">
+              Ainda não há dados para o ranking. Registre pelo menos uma partida.
+            </td>
+          </tr>
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCRIPT PARA ATUALIZAR PONTOS EM TEMPO REAL ============ -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function parseVal(input) {
+    const v = parseInt(input.value, 10);
+    return isNaN(v) ? 0 : v;
+  }
+
+  function recalcRow(tr) {
+    const isGoleiro = tr.dataset.goleiro === '1';
+    const baseDia = parseInt(tr.dataset.baseDia || '0', 10);
+    const baseAcum = parseInt(tr.dataset.baseAcumulado || '0', 10);
+
+    function get(metric) {
+      const inp = tr.querySelector('input[data-metrica="' + metric + '"]');
+      return inp ? parseVal(inp) : 0;
+    }
+
+    const gols = get('gols');
+    const assist = get('assistencias');
+    const vits = get('vitorias');
+    const emp = get('empates');
+    const semGol = get('sem_gol');
+
+    let novoDia;
+    if (isGoleiro) {
+      // goleiro: sem_gol + vits + assist + gols -> tudo * 2
+      novoDia = 2 * (semGol + vits + assist + gols);
+    } else {
+      // linha: 2*(gols + assist + vits) + empates
+      novoDia = 2 * (gols + assist + vits) + emp;
+    }
+
+    const celDia = tr.querySelector('.cel-total-dia');
+    if (celDia) celDia.textContent = novoDia;
+
+    const celAcum = tr.querySelector('.cel-total-acum');
+    if (celAcum) {
+      const novoAcum = baseAcum - baseDia + novoDia;
+      celAcum.textContent = novoAcum;
+    }
+  }
+
+  document.querySelectorAll('.linha-jogador input.campo-stat').forEach(function (input) {
+    input.addEventListener('input', function () {
+      const tr = this.closest('.linha-jogador');
+      if (tr) recalcRow(tr);
+    });
+  });
+});
+</script>
+
+{% endblock %}

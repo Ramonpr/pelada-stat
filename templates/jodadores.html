@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card card-app">
+  <div class="card-header card-header-app d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h5 mb-1 text-light">Jogadores (picklist)</h1>
+      <small class="text-secondary">Cadastre os nomes uma vez. Eles aparecem automaticamente na tela de partidas.</small>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <form method="post" class="row g-3 mb-4">
+      <div class="col-md-6">
+        <label class="form-label small text-secondary">Nome do jogador</label>
+        <input type="text" name="nome"
+               class="form-control bg-dark text-light border-secondary"
+               placeholder="Ex.: Will, Léo, Daniel..." required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small text-secondary">É goleiro?</label><br>
+        <div class="form-check form-switch mt-1">
+          <input class="form-check-input" type="checkbox" name="goleiro" value="1" id="chkGoleiro">
+          <label class="form-check-label text-light" for="chkGoleiro">Marcar como goleiro</label>
+        </div>
+      </div>
+      <div class="col-md-3 d-flex align-items-end justify-content-end">
+        <button class="btn btn-primary w-100">
+          Adicionar jogador
+        </button>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-darkish align-middle">
+        <thead>
+        <tr>
+          <th style="min-width: 220px;">Jogador</th>
+          <th style="width: 130px;">Função</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for j in jogadores %}
+          <tr>
+            <td>{{ j.nome }}</td>
+            <td>
+              {% if j.goleiro %}
+                <span class="badge badge-role">Goleiro</span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-light border border-secondary">Linha</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        {% if jogadores|length == 0 %}
+          <tr>
+            <td colspan="2" class="text-secondary small">
+              Nenhum jogador cadastrado ainda. Use o formulário acima para começar.
+            </td>
+          </tr>
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
