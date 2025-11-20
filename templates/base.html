@@ -108,6 +108,72 @@
       text-transform: uppercase;
       letter-spacing: .06em;
     }
+
+    /* --------- MOBILE AJUSTES --------- */
+    @media (max-width: 576px) {
+      .app-shell {
+        padding: .75rem .5rem 2rem;
+      }
+      .card-app {
+        border-radius: 10px;
+      }
+      .card-header-app h1.h5 {
+        font-size: 1rem;
+      }
+      .card-header-app small {
+        font-size: .75rem;
+      }
+      .pill {
+        display: none; /* pra ganhar espaço */
+      }
+      .table-responsive-stack table {
+        width: 100%;
+      }
+      .table-responsive-stack thead {
+        display: none;
+      }
+      .table-responsive-stack tbody,
+      .table-responsive-stack tr,
+      .table-responsive-stack td {
+        display: block;
+        width: 100%;
+      }
+      .table-responsive-stack tr {
+        margin-bottom: .8rem;
+        border-radius: 10px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(30, 64, 175, 0.4);
+        padding: .35rem .35rem .45rem;
+      }
+      .table-responsive-stack td {
+        border: none !important;
+        position: relative;
+        padding-left: 6.5rem;
+        padding-top: .35rem;
+        padding-bottom: .2rem;
+        text-align: left !important;
+      }
+      .table-responsive-stack td:first-child {
+        padding-left: .75rem;
+        padding-top: .45rem;
+      }
+      .table-responsive-stack td[data-label]:before {
+        content: attr(data-label);
+        position: absolute;
+        left: .75rem;
+        top: .4rem;
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #9ca3af;
+        font-weight: 600;
+      }
+      .table-responsive-stack input.form-control-sm {
+        font-size: .8rem;
+        padding-top: .18rem;
+        padding-bottom: .18rem;
+      }
+    }
   </style>
 </head>
 
@@ -115,7 +181,7 @@
 
 <nav class="navbar navbar-expand-lg mb-3">
   <div class="container-fluid" style="max-width: 1100px;">
-    <a class="navbar-brand" href="{{ url_for('index') }}">Pelada Peco</a>
+    <a class="navbar-brand" href="{{ url_for('index') }}">Pelada Stats</a>
 
     <button class="navbar-toggler text-light" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarNav" aria-controls="navbarNav"
