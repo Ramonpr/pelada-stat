@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive table-responsive-stack">
           <table class="table table-sm table-darkish align-middle text-center">
             <thead>
             <tr>
@@ -65,12 +65,12 @@
                   data-goleiro="1"
                   data-base-dia="{{ base_dia }}"
                   data-base-acumulado="{{ base_acum }}">
-                <td style="text-align:left;">
+                <td style="text-align:left;" data-label="Goleiro">
                   <span class="badge badge-role me-1">GOL</span>
                   {{ j.nome }}
                 </td>
 
-                <td>
+                <td data-label="Gols (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="gols"
@@ -78,7 +78,7 @@
                          value="{{ e.gols if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Assistências (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="assistencias"
@@ -86,7 +86,7 @@
                          value="{{ e.assistencias if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Vitórias (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="vitorias"
@@ -94,7 +94,7 @@
                          value="{{ e.vitorias if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Sem tomar gol (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="sem_gol"
@@ -109,11 +109,11 @@
                        name="j{{ j.id }}_empates"
                        value="{{ e.empates if e else 0 }}">
 
-                <td class="fw-semibold text-success cel-total-dia">
+                <td class="fw-semibold text-success cel-total-dia" data-label="Total do dia">
                   {{ base_dia }}
                 </td>
 
-                <td class="cel-total-acum">
+                <td class="cel-total-acum" data-label="Total acumulado">
                   <span class="fw-semibold">{{ base_acum }}</span>
                 </td>
               </tr>
@@ -143,7 +143,7 @@
           </div>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive table-responsive-stack">
           <table class="table table-sm table-darkish align-middle text-center">
             <thead>
             <tr>
@@ -171,11 +171,11 @@
                   data-goleiro="0"
                   data-base-dia="{{ base_dia }}"
                   data-base-acumulado="{{ base_acum }}">
-                <td style="text-align:left;">
+                <td style="text-align:left;" data-label="Jogador">
                   {{ j.nome }}
                 </td>
 
-                <td>
+                <td data-label="Gols (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="gols"
@@ -183,7 +183,7 @@
                          value="{{ e.gols if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Assistências (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="assistencias"
@@ -191,7 +191,7 @@
                          value="{{ e.assistencias if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Vitórias (2 pts)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="vitorias"
@@ -199,7 +199,7 @@
                          value="{{ e.vitorias if e else 0 }}">
                 </td>
 
-                <td>
+                <td data-label="Empates (1 pt)">
                   <input type="number"
                          class="form-control form-control-sm bg-dark text-light border-secondary campo-stat"
                          data-metrica="empates"
@@ -214,11 +214,11 @@
                        name="j{{ j.id }}_sem_gol"
                        value="{{ e.sem_gol if e else 0 }}">
 
-                <td class="fw-semibold text-success cel-total-dia">
+                <td class="fw-semibold text-success cel-total-dia" data-label="Total do dia">
                   {{ base_dia }}
                 </td>
 
-                <td class="cel-total-acum">
+                <td class="cel-total-acum" data-label="Total acumulado">
                   <span class="fw-semibold">{{ base_acum }}</span>
                 </td>
               </tr>
@@ -252,7 +252,7 @@
     <small class="text-secondary">Soma de todos os jogos registrados</small>
   </div>
   <div class="card-body">
-    <div class="table-responsive">
+    <div class="table-responsive table-responsive-stack">
       <table class="table table-sm table-darkish align-middle text-center">
         <thead>
         <tr>
@@ -269,19 +269,19 @@
         <tbody>
         {% for r in ranking %}
           <tr>
-            <td>{{ loop.index }}</td>
-            <td style="text-align:left;">
+            <td data-label="#"> {{ loop.index }} </td>
+            <td style="text-align:left;" data-label="Jogador">
               {% if r.jogador.goleiro %}
                 <span class="badge badge-role me-1">GOL</span>
               {% endif %}
               {{ r.jogador.nome }}
             </td>
-            <td>{{ r.gols }}</td>
-            <td>{{ r.assistencias }}</td>
-            <td>{{ r.vitorias }}</td>
-            <td>{{ r.empates }}</td>
-            <td>{{ r.sem_gol }}</td>
-            <td><strong class="text-success">{{ r.pontos }}</strong></td>
+            <td data-label="Gols">{{ r.gols }}</td>
+            <td data-label="Assistências">{{ r.assistencias }}</td>
+            <td data-label="Vitórias">{{ r.vitorias }}</td>
+            <td data-label="Empates">{{ r.empates }}</td>
+            <td data-label="Sem gol">{{ r.sem_gol }}</td>
+            <td data-label="Pontos"><strong class="text-success">{{ r.pontos }}</strong></td>
           </tr>
         {% endfor %}
         {% if ranking|length == 0 %}
